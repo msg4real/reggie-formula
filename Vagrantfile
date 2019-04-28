@@ -20,7 +20,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.network :forwarded_port, guest: 4443, host: 4443 # haproxy https proxy
     config.vm.network :forwarded_port, guest: 8282, host: 8282 # cherrypy backend
 
-    config.vm.synced_folder '.', '/home/vagrant/reggie-formula', create: true
+    config.vm.synced_folder '.', '/home/vagrant/reggie-formula', type: "rsync"
+    #if Vagrant::Util::Platform.linux?
+    #config.vm.synced_folder '.', '/home/vagrant/reggie-formula', type: "nfs"
+    #end
+
+
 
     # No good can come from updating plugins.
     # Plus, this makes creating Vagrant instances MUCH faster.
