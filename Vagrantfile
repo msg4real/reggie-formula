@@ -24,7 +24,29 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     #if Vagrant::Util::Platform.linux?
     #config.vm.synced_folder '.', '/home/vagrant/reggie-formula', type: "nfs"
     #end
+    if Vagrant.has_plugin?('vagrant-unison2')
+        # Required vagrant-unison2 configs 
+        config.sync.host_folder = "."  #relative to the folder your Vagrantfile is in
+        config.sync.guest_folder = "reggie-formula/" #relative to the vagrant home folder -> /home/vagrant 
+      
+        # Optional configs
+        # File patterns to ignore when syncing. Ensure you don't have spaces between the commas!
+        #config.unison.ignore = "Name {.DS_Store,.git,node_modules}" # Default: none
 
+        # SSH connection details for Vagrant to communicate with VM.
+        #config.unison.ssh_host = "10.0.0.1" # Default: '127.0.0.1'
+        #config.unison.ssh_port = 22 # Default: 2222
+        #config.unison.ssh_user = "deploy" # Default: 'vagrant'
+        #config.unison.perms = 0 # if you get "properties changed on both sides" error 
+
+        # `vagrant unison-sync-polling` command will restart unison in VM if memory
+        # usage gets above this threshold (in MB).
+        #config.unison.mem_cap_mb = 500 # Default: 200
+
+        # Change polling interval (in seconds) at which to sync changes
+        #config.unison.repeat = 5 # Default: 1
+    end
+        
 
 
     # No good can come from updating plugins.
@@ -142,5 +164,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       Password: magfest
 
 "
-
+        if Vagrant.has_plugin?('vagrant-unison2')
+            config.vm.post_up_message = "Additional unison setup is required and edit reggie_up.sh to add 'vagrant unison-sync-polling' to the end of the file "
+        end
 end
